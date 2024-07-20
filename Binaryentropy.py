@@ -1,6 +1,7 @@
 import numpy as np
 from collections import Counter
 
+
 # Node class definition
 class Node:
     def __init__(self, feature=None, split_value=None, left=None, right=None, label=None):
@@ -10,6 +11,7 @@ class Node:
         self.right = right
         self.label = label
 
+
 # Function to calculate binary entropy
 def binary_entropy(labels):
     total = len(labels)
@@ -18,6 +20,7 @@ def binary_entropy(labels):
     count = Counter(labels)
     probs = [count[label] / total for label in count]
     return -sum(p * np.log2(p) for p in probs if p > 0)
+
 
 # Function to find the best split based on binary entropy
 def best_split(X, y):
@@ -43,9 +46,10 @@ def best_split(X, y):
 
     return best_feature, best_split_value, best_entropy
 
+
 # Function to build the tree
 def build_tree(X, y, depth, max_depth):
-    if depth == max_depth-1 or len(set(y)) == 1:
+    if depth == max_depth - 1 or len(set(y)) == 1:
         label = Counter(y).most_common(1)[0][0]
         return Node(label=label)
 
@@ -59,6 +63,7 @@ def build_tree(X, y, depth, max_depth):
 
     return Node(feature=feature, split_value=split_value, left=left_node, right=right_node)
 
+
 # Function to predict the label for a given data point
 def predict(node, x):
     while node.label is None:
@@ -68,10 +73,17 @@ def predict(node, x):
             node = node.right
     return node.label
 
+
 # Function to calculate the error of the tree on the dataset
 def calculate_error(tree, X, y):
     predictions = [predict(tree, x) for x in X]
+    # count = 0
+    # for prediction,label in zip(predictions,y):
+    #     if prediction != label:
+    #         count = count+1
+    # return count
     return np.mean(predictions != y)
+
 
 # Function to print the tree structure
 def print_tree(node):
@@ -79,6 +91,7 @@ def print_tree(node):
     lines, *_ = display_aux(node)
     for line in lines:
         print(line)
+
 
 def display_aux(node):
     """Returns list of strings, width, height, and horizontal coordinate of the root."""
@@ -103,21 +116,15 @@ def display_aux(node):
     lines = [first_line, second_line] + [a + (u + 2) * ' ' + b for a, b in zipped_lines]
     return lines, n + m + u + 2, max(p, q) + 2, n + u // 2
 
-# # Load data from vectors.txt
-# data = np.loadtxt('vectors.txt')
-#
-# # Split data into features and labels
-# X = data[:, :-1]
-# y = data[:, -1].astype(int)
-#
-#
-# # Build the tree
-# tree = build_tree(X, y,0, max_depth=3)
-#
-# # Calculate the error
-# error = calculate_error(tree, X, y)
-# print(f"Error: {error}")
-#
-# # Print the tree structure
-# print_tree(tree)
-#
+
+def main(features, labels):
+    # Build the tree
+    tree = build_tree(features, labels, 0, max_depth=3)
+
+    # Calculate the error
+    error = calculate_error(tree, features, labels)
+    print(f"Error: {error}" + "%")
+
+    # Print the tree structure
+    print("tree")
+    print_tree(tree)
